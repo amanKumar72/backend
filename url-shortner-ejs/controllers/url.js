@@ -12,11 +12,10 @@ const generateNewShortUrl = async (req, res) => {
     shortId: shortId,
     originalUrl: req.body.url,
     visitHistory: [],
+    createdBy: req.user._id,
   });
 
-  const urls=await Url.find({});
-
-  return res.render("home", { Urls:urls });
+  return res.redirect("/home");
 };
 
 const handleRedirectToOriginalUrl = async (req, res) => {
@@ -44,7 +43,7 @@ const getUrlAnylatics = async (req, res) => {
   const entry = await Url.findOne({ shortId });
 
   if (!entry) {
-    return res.status(404).json({ error:"url not found"  });
+    return res.status(404).json({ error: "url not found" });
   }
   return res.status(200).json({
     anylatics: entry.visitHistory,
@@ -52,4 +51,8 @@ const getUrlAnylatics = async (req, res) => {
   });
 };
 
-module.exports = { generateNewShortUrl, handleRedirectToOriginalUrl, getUrlAnylatics };
+module.exports = {
+  generateNewShortUrl,
+  handleRedirectToOriginalUrl,
+  getUrlAnylatics,
+};
