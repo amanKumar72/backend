@@ -28,7 +28,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser())
 
 app.get("/home",restrictUnauthenticated, async (req, res) => {
-  const id=req.user.id;
+  
+  const id=req.cookies._id;
   const urls = await url.find({createdBy:id});
   return res.render("home", { Urls: urls });
 
