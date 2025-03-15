@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
-const cookieParser = require('cookie-parser');
 
 const urlRouter = require("./routes/url");
 const userRouter = require("./routes/user");
@@ -28,11 +27,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser())
 
 app.get("/home",restrictUnauthenticated, async (req, res) => {
-  
   const id=req.cookies._id;
   const urls = await url.find({createdBy:id});
   return res.render("home", { Urls: urls });
-
 });
 
 app.get("/signup", (req, res) => {
