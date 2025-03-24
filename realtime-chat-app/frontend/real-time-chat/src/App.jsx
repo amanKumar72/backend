@@ -22,7 +22,6 @@ function App() {
             setMessage('');
         }
     };
-
     return (
         <div>
             <h2>Realtime Chat</h2>
