@@ -27,7 +27,7 @@ fs.readFile("./helloAsync.txt", "utf-8", (err, data) => {
 fs.unlinkSync('./hello.txt')
 
 //return he stats of the file
-console.log(fs.statSync('./hello.txt'))
+console.log(fs.statSync('./hello.txt')) 
 
 //creates a directory 
 fs.mkdirSync('myFolder')

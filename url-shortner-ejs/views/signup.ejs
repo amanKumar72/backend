@@ -3,19 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sign Up - URL Shortener</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <meta name="description" content="Create your URL Shortener account">
+   
 </head>
 <body>
-    <div class="sign-up-form">
-        <form action="/api/signup" method="POST">
-          <label for="name"> Enter the name</label>
-          <input type="text" name="name" id="name" placeholder="Enter the name" />
-          <label for="email"> Enter the email</label>
-          <input type="email" name="email" id="email" placeholder="Enter the email" />
-          <label for="password"> Enter the password</label>
-          <input type="password" name="password" id="password" placeholder="Enter the password" />
-          <button type="submit">Sign Up</button>
+    <!-- Header Navigation -->
+    <header class="header">
+      <a href="/home" class="logo">URLShort</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/signin">Sign In</a></li>
+          <li><a href="/signup" class="active">Sign Up</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="container">
+      <div class="auth-area">
+        <h1>Create Account</h1>
+        <p class="subtitle">Join us to start shortening URLs and tracking analytics</p>
+        
+        <!-- Error/Success Messages -->
+        <% if (typeof error !== 'undefined' && error) { %>
+        <div class="message error-message">
+          <%= error %>
+        </div>
+        <% } %>
+        
+        <% if (typeof success !== 'undefined' && success) { %>
+        <div class="message success-message">
+          <%= success %>
+        </div>
+        <% } %>
+        
+        <form action="/api/user/signup" method="POST" id="signup-form">
+          <div class="input-group">
+            <label for="name">Full Name</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="name" 
+              placeholder="Enter your full name" 
+              required
+              autocomplete="name"
+              autofocus
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+          
+          <div class="input-group">
+            <label for="email">Email Address</label>
+            <input 
+              type="email" 
+              name="email" 
+              id="email" 
+              placeholder="Enter your email address" 
+              required
+              autocomplete="email"
+            />
+          </div>
+          
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input 
+              type="password" 
+              name="password" 
+              id="password" 
+              placeholder="Create a strong password" 
+              required
+              autocomplete="new-password"
+              minlength="6"
+            />
+            <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">
+              Password must be at least 6 characters long
+            </small>
+          </div>
+          
+          <div class="input-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input 
+              type="password" 
+              name="confirmPassword" 
+              id="confirmPassword" 
+              placeholder="Confirm your password" 
+              required
+              autocomplete="new-password"
+              minlength="6"
+            />
+          </div>
+          
+          <button type="submit" id="signup-btn">
+            <span class="btn-text">Create Account</span>
+          </button>
         </form>
+        
+        <div class="auth-links">
+          <p>Already have an account? <a href="/signin">Sign in here</a></p>
+        </div>
       </div>
+    </div>
+
+    <!-- JavaScript for enhanced functionality -->
+    <script>
+      // Form submission with loading state
+      document.getElementById('signup-form').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('signup-btn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        
+        // Validate passwords match
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password !== confirmPassword) {
+          e.preventDefault();
+          document.getElementById('confirmPassword').setCustomValidity('Passwords do not match');
+          document.getElementById('confirmPassword').reportValidity();
+          return;
+        }
+        
+        // Add loading state
+        submitBtn.classList.add('loading');
+        btnText.textContent = 'Creating Account...';
+        submitBtn.disabled = true;
+      });
+
+      // Name validation
+      document.getElementById('name').addEventListener('input', function(e) {
+        const input = e.target;
+        const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+        
+        if (input.value && !nameRegex.test(input.value)) {
+          input.setCustomValidity('Name should contain only letters and spaces (2-50 characters)');
+        } else {
+          input.setCustomValidity('');
+        }
+      });
+
+      // Email validation
+      document.getElementById('email').addEventListener('input', function(e) {
+        const input = e.target;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (input.value && !emailRegex.test(input.value)) {
+          input.setCustomValidity('Please enter a valid email address');
+        } else {
+          input.setCustomValidity('');
+        }
+      });
+
+      // Password validation
+      document.getElementById('password').addEventListener('input', function(e) {
+        const input = e.target;
+        const password = input.value;
+        
+        if (password && password.length < 6) {
+          input.setCustomValidity('Password must be at least 6 characters long');
+        } else {
+          input.setCustomValidity('');
+        }
+        
+        // Check confirm password if it has value
+        const confirmPassword = document.getElementById('confirmPassword');
+        if (confirmPassword.value) {
+          validatePasswordMatch();
+        }
+      });
+
+      // Confirm password validation
+      document.getElementById('confirmPassword').addEventListener('input', validatePasswordMatch);
+
+      function validatePasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword');
+        
+        if (confirmPassword.value && password !== confirmPassword.value) {
+          confirmPassword.setCustomValidity('Passwords do not match');
+        } else {
+          confirmPassword.setCustomValidity('');
+        }
+      }
+
+      // Auto-hide messages after 5 seconds
+      const messages = document.querySelectorAll('.message');
+      messages.forEach(message => {
+        setTimeout(() => {
+          message.style.opacity = '0';
+          message.style.transform = 'translateY(-10px)';
+          setTimeout(() => {
+            message.style.display = 'none';
+          }, 300);
+        }, 5000);
+      });
+    </script>
 </body>
 </html>
