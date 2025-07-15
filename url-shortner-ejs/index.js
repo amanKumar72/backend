@@ -12,12 +12,13 @@ const cookieParser=require('cookie-parser')
 const app = express();
 const PORT = process.env.PORT || 8001;
 
+// console.log=(){}
+
 //setting the view engine
 app.set("view engine", "ejs");
 
 //provide the path to the static files
 app.set("views", path.resolve(__dirname, "views"));
-
 //connect to the database
 mongoose
   .connect(process.env.MONGO_URL)

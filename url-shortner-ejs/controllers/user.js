@@ -4,25 +4,35 @@ const { setUser, generateToken } = require("../service/auth");
 
 const handleSignUpUser = async (req, res) => {
   const { name, email, password } = req.body;
-  const user = await User.create({ name, email, password });
-  if (user) {
-    res.redirect("/signin");
+  try {
+    if(User.findOne({email})){
+        throw new Error("User already exists with this email address!Sign in instead!")
+    }
+    const user = await User.create({ name, email, password });
+    if (user) {
+      res.redirect("/signin");
+    }
+  } catch (error) {
+    res.render("signup", { error:error || "Something went wrong while signing up. Please try again later!" });
   }
 };
 
 const handleSignInUser = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email, password });
-  if (!user) {
-    return res.render("signin", { error: "Invalid user email or password" });
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email, password });
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
+    const token = generateToken(user._id, email);
+    res.cookie("token", token);
+    res.cookie("id", user._id);
+    return res.redirect("/home");
+  } catch (error) {
+    res.render("signin", { error });
   }
   //   let sessionId = uuidV4();
   //   setUser(sessionId, user);
-
-  const token = generateToken(user._id, email);
-  res.cookie('token',token);
-  res.cookie('id',user._id);
-  return res.redirect("/home");
 };
 
 module.exports = { handleSignUpUser, handleSignInUser };
