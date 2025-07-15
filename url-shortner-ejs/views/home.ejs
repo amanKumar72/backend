@@ -79,7 +79,7 @@
                   rel="noopener noreferrer"
                   title="Click to visit shortened URL"
                 >
-                  http://localhost:8001/<%= element.shortId %>
+                <%=baseURL%>/<%= element.shortId %>
                 </a>
               </p>
             </div>
@@ -91,7 +91,7 @@
               </div>
               <button 
                 class="copy-btn" 
-                onclick="copyToClipboard('http://localhost:8001/<%= element.shortId %>',event)"
+                onclick="copyToClipboard('<%=baseURL%>/<%= element.shortId %>',event)"
                 title="Copy short URL to clipboard"
               >
                 Copy Link

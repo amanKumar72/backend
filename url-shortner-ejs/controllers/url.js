@@ -14,7 +14,7 @@ const generateNewShortUrl = async (req, res) => {
       shortId: shortId,
       originalUrl: req.body.url,
       visitHistory: [],
-      createdBy: req.cookies._id,
+      createdBy: req.cookies.id,
     });
 
     return res.redirect("/home");

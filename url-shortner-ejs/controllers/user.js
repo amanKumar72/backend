@@ -5,7 +5,9 @@ const { setUser, generateToken } = require("../service/auth");
 const handleSignUpUser = async (req, res) => {
   const { name, email, password } = req.body;
   try {
-    if(User.findOne({email})){
+    const existingUser = await User.findOne({email});
+    console.log(existingUser);
+    if(existingUser){
         throw new Error("User already exists with this email address!Sign in instead!")
     }
     const user = await User.create({ name, email, password });

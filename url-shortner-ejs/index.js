@@ -2,8 +2,14 @@ require("dotenv").config()
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const shortid = require("shortid");
+const {
+  generateNewShortUrl,
+  handleRedirectToOriginalUrl,
+  getUrlAnylatics,
+} = require("./controllers/url")
 
-const urlRouter = require("./routes/url");
+// const urlRouter = require("./routes/url");
 const userRouter = require("./routes/user");
 const url = require("./models/url");
 const {restrictUnauthenticated} =require("./middlewares")
@@ -32,9 +38,9 @@ app.use(cookieParser());
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/home",restrictUnauthenticated, async (req, res) => {
+app.get(['/', '/home'],restrictUnauthenticated, async (req, res) => {
   console.log(req.cookies)
-  const id=req.cookies._id;
+  const id=req.cookies.id;
   const urls = await url.find({createdBy:id});
   console.log(urls)
   return res.render("home", { Urls: urls,baseURL:process.env.BASE_URL });
@@ -56,7 +62,12 @@ app.get("/signin", (req, res) => {
 
 app.use("/api/user", userRouter);
 
-app.use("/",restrictUnauthenticated, urlRouter);
+app.post("/url", generateNewShortUrl);
+
+app.get("/:id", handleRedirectToOriginalUrl);
+
+app.get("/analytics/:id", getUrlAnylatics);
+
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
